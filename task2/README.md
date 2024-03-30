@@ -1,5 +1,5 @@
 # Maze
-From reading the assignment to full realization spent approximately 3 hours.
+From reading the assignment to full realization spent approximately 3 hours.  
 Recursive Backtracker is chosen as the algorithm to implement the maze https://weblog.jamisbuck.org/2011/1/3/maze-generation-kruskal-s-algorithm
 
 ## Build and Run for Linux
@@ -13,5 +13,5 @@ make
 ```
 
 # Complexity
-Time Complexity: $O(height * width)$
+Time Complexity: $O(height * width)$  
 Space Complexity: $O(height * width)$ - memory for stack
