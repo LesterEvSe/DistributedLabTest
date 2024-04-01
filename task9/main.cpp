@@ -52,6 +52,10 @@ void plus_and_minus_tests() {
     num2 = BigInt("2100436268304949465469152169050553499388589256398614019764087298232731952205");
     std::cout << "Test10: " << check(num1 - num2, BigInt("-8013233018360108814817437264218583498936395094333533276523963018570781116064"));
 
+    num1 = BigInt("8796");
+    num2 = BigInt("23");
+    std::cout << "Test11: " << check(num1 - num2, BigInt("8773"));
+
     std::cout << std::endl;
 }
 
@@ -77,6 +81,16 @@ void multiply_tests() {
     num2 = BigInt("-3029613346087335900692057905494693632329204701910191321772183583923555603055");
     BigInt res("17530296844930584098686471133123526535894636896209113668872569260041333924699635889877017262804525726346271216292420744804783913117122283226890166740835");
     std::cout << "Test5: " << check(num1 * num2, res);
+
+    std::cout << std::endl;
+}
+
+void division_tests() {
+    BigInt num1, num2;
+    num1 = BigInt("235328967186965560636092487672274298032698178001584420387677709515603751810");
+    num2 = BigInt("61042697860145807716747171190736990291");
+    std::cout << "Test5: " << check(num1 / num2, BigInt("3855153448920703543655522463019737887"));
+
     std::cout << std::endl;
 }
 
@@ -92,6 +106,7 @@ void fft_tests() {
 int main() {
     plus_and_minus_tests();
     multiply_tests();
-
+    division_tests();
+    
     return 0;
 }

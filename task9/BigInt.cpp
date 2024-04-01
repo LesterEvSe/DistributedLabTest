@@ -27,7 +27,7 @@ std::string BigInt::subtract(const std::string &num, const std::string &minus) {
     std::string answer;
     int curr = 0, i = num.size()-1, j = minus.size()-1;
 
-    while (j >= 0 || curr) {
+    while (i >= 0 || j >= 0 || curr) {
         int sum = num[i--] - '0' + curr;
         if (j >= 0) sum -= minus[j--] - '0';
 
@@ -50,7 +50,7 @@ std::string BigInt::subtract(const std::string &num, const std::string &minus) {
 }
 
 BigInt::Comparison BigInt::compare(const std::string &num1, const std::string &num2) {
-    if (num1.size() != num2.size()) return num1.size() < num2.size() ? LBIGGER : RBIGGER;
+    if (num1.size() != num2.size()) return num1.size() > num2.size() ? LBIGGER : RBIGGER;
     for (int i = 0; i < num1.size(); ++i) {
         if (num1[i] > num2[i]) return LBIGGER;
         else if (num1[i] < num2[i]) return RBIGGER;
@@ -146,6 +146,34 @@ BigInt BigInt::operator*(const BigInt &num) const {
     if (m_number.size() < 100'000 || num.m_number.size() < 100'000) return {sign + fft_mult(num)};
     return {0};
     // return {sign + karatsuba_mult(num)};
+}
+
+
+// Long Division algorithm. Standard algorithm
+BigInt BigInt::operator/(const BigInt &num) const {
+    if (num.m_number.size() == 1 && num.m_number[0] == '0')
+        throw std::runtime_error("Zero Division Error");
+
+    std::string res;
+    std::string remainder = m_number.substr(0, num.m_number.size()-1);
+
+    for (int i = remainder.size(); i < m_number.size(); ++i) {
+        remainder += m_number[i];
+        char digit = '0';
+
+        //std::cout << (compare(remainder, num.m_number) == RBIGGER) << "\n";
+        //std::cout << remainder << "\n" << num.m_number << "\n\n";
+
+        while (compare(remainder, num.m_number) != RBIGGER) {
+            remainder = subtract(remainder, num.m_number);
+            ++digit;
+        }
+        if (!res.empty() || digit != '0')
+            res += digit;
+    }
+
+    std::string sign = (m_positive && num.m_positive || !m_positive && !num.m_positive) ? "" : "-";
+    return res.empty() ? BigInt(0) : BigInt(sign + res);
 }
 
 
