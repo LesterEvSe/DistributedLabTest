@@ -1,7 +1,7 @@
 #include "BigInt.hpp"
+#include "fft.hpp"
 #include <stdexcept>
-
-
+#include <iostream> // for testing
 
 
 // helper methods
@@ -58,6 +58,45 @@ BigInt::Comparison BigInt::compare(const std::string &num1, const std::string &n
     return EQUAL;
 }
 
+// BigInt karatsuba_mult(const BigInt &num) const;
+std::string BigInt::fft_mult(const BigInt &num) const {
+    std::vector<int> a(m_number.size());
+    std::vector<int> b(num.m_number.size());
+
+    int zeros = 0;
+    bool count = true;
+    for (int i = m_number.size()-1; i >= 0; --i) {
+        a[i] = m_number[i] - '0';
+        if (a[i]) count = false;
+        if (!a[i]) zeros += count;
+    }
+
+    count = true;
+    for (int i = num.m_number.size()-1; i >= 0; --i) {
+        b[i] = num.m_number[i] - '0';
+        if (b[i]) count = false;
+        if (!b[i]) zeros += count;
+    }
+
+    std::vector<int> answer = FFT::multiply(a, b);
+    std::string res;
+
+    int curr = 0, j = answer.size()-1;
+    while (j >= 0 || curr) {
+        if (j >= 0) curr += answer[j--];
+        res += (curr % 10) + '0';
+        curr /= 10;
+    }
+
+    int i = 0;
+    j = res.size()-1;
+
+    while (i < j) std::swap(res[i++], res[j--]);
+    while (zeros-- > 0) res += '0';
+    return res;
+}
+
+
 
 BigInt::BigInt(std::string number) {
     if (number.empty()) {
@@ -101,8 +140,14 @@ BigInt BigInt::operator-(const BigInt &num) const {
 }
 
 BigInt BigInt::operator*(const BigInt &num) const {
+    std::string sign = (m_positive && num.m_positive || !m_positive && !num.m_positive) ? "" : "-";
+
+    // If brute can be bigger than 100'000 digits
+    if (m_number.size() < 100'000 || num.m_number.size() < 100'000) return {sign + fft_mult(num)};
     return {0};
+    // return {sign + karatsuba_mult(num)};
 }
+
 
 
 bool BigInt::operator<(const BigInt &num) const {

@@ -14,13 +14,17 @@ private:
     bool m_positive;
     std::string m_number;
 
-    BigInt normal_multiplication(const BigInt &num);
-
     static std::string add(const std::string &num1, const std::string &num2);
     static std::string subtract(const std::string &num, const std::string &minus);
 
+    std::string karatsuba_mult(const BigInt &num) const;
+    std::string fft_mult(const BigInt &num) const;
+
     // -1 - left bigger; 0 - equal; +1 - right bigger
     static Comparison compare(const std::string &num1, const std::string &num2);
+
+    void operator=(int) = delete;
+    void operator=(std::string) = delete;
 
 public:
     BigInt(int num=0): m_positive(num >= 0), m_number(std::to_string(num < 0 ? -(long)num : num)) {}
@@ -42,8 +46,8 @@ public:
     bool operator>=(const BigInt &num) const;
     bool operator==(const BigInt &num) const;
 
-    operator int() const;
-    operator std::string() const;
+    explicit operator int() const;
+    explicit operator std::string() const;
 };
 
 

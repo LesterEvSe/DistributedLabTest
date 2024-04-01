@@ -4,6 +4,7 @@
 #include <vector>
 #include <complex>
 
+// Reworked code from http://web.mit.edu/~ecprice/acm/acm08/notebook.html#file12
 class FFT {
 private:
     using reim = std::complex<double>;
