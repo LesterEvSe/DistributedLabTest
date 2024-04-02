@@ -49,6 +49,29 @@ std::string BigInt::subtract(const std::string &num, const std::string &minus) {
     return answer;
 }
 
+// Long Division algorithm. Standard algorithm from elementary school
+std::string BigInt::divide(const std::string &num, const std::string &den, bool _remainder) {
+    if (den.size() == 1 && den[0] == '0')
+        throw std::runtime_error("Zero Division Error");
+
+    std::string res;
+    std::string remainder = num.substr(0, den.size()-1);
+
+    for (int i = remainder.size(); i < num.size(); ++i) {
+        remainder += num[i];
+        char digit = '0';
+
+        while (compare(remainder, den) != RBIGGER) {
+            remainder = subtract(remainder, den);
+            ++digit;
+        }
+        if (!res.empty() || digit != '0')
+            res += digit;
+    }
+    return _remainder ? remainder : res;
+}
+
+
 BigInt::Comparison BigInt::compare(const std::string &num1, const std::string &num2) {
     if (num1.size() != num2.size()) return num1.size() > num2.size() ? LBIGGER : RBIGGER;
     for (int i = 0; i < num1.size(); ++i) {
@@ -149,30 +172,15 @@ BigInt BigInt::operator*(const BigInt &num) const {
 }
 
 
-// Long Division algorithm. Standard algorithm
 BigInt BigInt::operator/(const BigInt &num) const {
-    if (num.m_number.size() == 1 && num.m_number[0] == '0')
-        throw std::runtime_error("Zero Division Error");
-
-    std::string res;
-    std::string remainder = m_number.substr(0, num.m_number.size()-1);
-
-    for (int i = remainder.size(); i < m_number.size(); ++i) {
-        remainder += m_number[i];
-        char digit = '0';
-
-        //std::cout << (compare(remainder, num.m_number) == RBIGGER) << "\n";
-        //std::cout << remainder << "\n" << num.m_number << "\n\n";
-
-        while (compare(remainder, num.m_number) != RBIGGER) {
-            remainder = subtract(remainder, num.m_number);
-            ++digit;
-        }
-        if (!res.empty() || digit != '0')
-            res += digit;
-    }
-
     std::string sign = (m_positive && num.m_positive || !m_positive && !num.m_positive) ? "" : "-";
+    std::string res = BigInt::divide(m_number, num.m_number, false);
+    return res.empty() ? BigInt(0) : BigInt(sign + res);
+}
+
+BigInt BigInt::operator%(const BigInt &num) const {
+    std::string sign = m_positive ? "" : "-";
+    std::string res = BigInt::divide(m_number, num.m_number, true);
     return res.empty() ? BigInt(0) : BigInt(sign + res);
 }
 

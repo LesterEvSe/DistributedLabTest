@@ -60,6 +60,7 @@ void plus_and_minus_tests() {
 }
 
 void multiply_tests() {
+    std::cout << "Multiply Tests\n";
     BigInt num1, num2;
     num1 = BigInt(3942);
     num2 = BigInt(7390);
@@ -82,14 +83,62 @@ void multiply_tests() {
     BigInt res("17530296844930584098686471133123526535894636896209113668872569260041333924699635889877017262804525726346271216292420744804783913117122283226890166740835");
     std::cout << "Test5: " << check(num1 * num2, res);
 
+    num1 = BigInt("20000");
+    num2 = BigInt("45000");
+    std::cout << "Test6: " << check(num1 * num2, BigInt("900000000"));
+
     std::cout << std::endl;
 }
 
 void division_tests() {
+    std::cout << "Division Tests\n";
     BigInt num1, num2;
+    num1 = BigInt(12);
+    num2 = BigInt(1);
+    std::cout << "Test1: " << check(num1 / num2, BigInt(12));
+
+    num1 = BigInt(-524);
+    num2 = BigInt(-56);
+    std::cout << "Test2: " << check(num1 / num2, BigInt(9));
+
+    num1 = BigInt(978567);
+    num2 = BigInt(-734);
+    std::cout << "Test3: " << check(num1 / num2, BigInt(-1333));
+
+    num1 = BigInt("1725644784760724795304475");
+    num2 = BigInt("2767901553815");
+    std::cout << "Test4: " << check(num1 / num2, BigInt("623448757555"));
+
     num1 = BigInt("235328967186965560636092487672274298032698178001584420387677709515603751810");
     num2 = BigInt("61042697860145807716747171190736990291");
     std::cout << "Test5: " << check(num1 / num2, BigInt("3855153448920703543655522463019737887"));
+
+    num1 = BigInt("1234125123");
+    num2 = BigInt("2366515463");
+    std::cout << "Test6: " << check(num1 / num2, BigInt(0));
+
+    std::cout << std::endl;
+}
+
+void division_with_remainder_tests() {
+    std::cout << "Division with remainder tests\n";
+    BigInt num1, num2;
+    num1 = BigInt(23512);
+    num2 = BigInt(321662);
+    std::cout << "Test1: " << check(num1 % num2, num1);
+
+    num1 = BigInt(424268);
+    num2 = BigInt(-358);
+    std::cout << "Test2: " << check(num1 % num2, BigInt(38));
+
+    num1 = BigInt("-165552611");
+    num2 = BigInt("-15653");
+    std::cout << "Test3: " << check(num1 % num2, BigInt(-6483));
+
+
+    num1 = BigInt("-1030904679897134708160285970453473199806033360699641489201333428182197161893");
+    num2 = BigInt("45845269018283096547057010054707163542");
+    std::cout << "Test4: " << check(num1 % num2, BigInt("-41806999527922083709215100619759029989"));
 
     std::cout << std::endl;
 }
@@ -107,6 +156,7 @@ int main() {
     plus_and_minus_tests();
     multiply_tests();
     division_tests();
-    
+    division_with_remainder_tests();
+
     return 0;
 }

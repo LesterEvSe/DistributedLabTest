@@ -1,9 +1,10 @@
-#ifndef TASK9_BIGINT_HPP
-#define TASK9_BIGINT_HPP
+#ifndef LONGARITH_BIGINT_HPP
+#define LONGARITH_BIGINT_HPP
 
 #include <string>
 
-class BigInt {
+class BigInt
+{
 private:
     enum Comparison {
         LBIGGER,
@@ -16,11 +17,11 @@ private:
 
     static std::string add(const std::string &num1, const std::string &num2);
     static std::string subtract(const std::string &num, const std::string &minus);
+    static std::string divide(const std::string &num, const std::string &den, bool _remainder);
 
     std::string karatsuba_mult(const BigInt &num) const;
     std::string fft_mult(const BigInt &num) const;
 
-    // -1 - left bigger; 0 - equal; +1 - right bigger
     static Comparison compare(const std::string &num1, const std::string &num2);
 
     void operator=(int) = delete;
@@ -51,4 +52,4 @@ public:
 };
 
 
-#endif //TASK9_BIGINT_HPP
+#endif //LONGARITH_BIGINT_HPP
