@@ -1,6 +1,8 @@
 #include "BigInt.hpp"
 #include "fft.hpp"
+
 #include <stdexcept>
+#include <climits> // for INT_MAX constant
 #include <iostream> // for testing
 
 
@@ -71,6 +73,35 @@ std::string BigInt::divide(const std::string &num, const std::string &den, bool 
     return _remainder ? remainder : res;
 }
 
+std::string BigInt::divide_by_two(const std::string &num) {
+    std::string res;
+    const short divisor = 2;
+    short remainder = 0;
+
+    for (int i = 0; i < num.size(); ++i) {
+        remainder = remainder*10 + num[i]-'0';
+        if (remainder < divisor && res.empty()) continue;
+        res += remainder/2 + '0';
+        remainder %= 2;
+    }
+    return res;
+}
+
+void BigInt::swap_str(std::string &number) {
+    for (int i = 0, j = number.size()-1; i < j; ++i, --j)
+        std::swap(number[i], number[j]);
+}
+
+std::string BigInt::bin(std::string num) {
+    std::string bin;
+    while (!num.empty()) {
+        bool last_bit = (num.back()-'0')%2;
+        bin += last_bit ? '1' : '0';
+        num = divide_by_two(num);
+    }
+    return bin;
+}
+
 
 BigInt::Comparison BigInt::compare(const std::string &num1, const std::string &num2) {
     if (num1.size() != num2.size()) return num1.size() > num2.size() ? LBIGGER : RBIGGER;
@@ -81,22 +112,24 @@ BigInt::Comparison BigInt::compare(const std::string &num1, const std::string &n
     return EQUAL;
 }
 
-// BigInt karatsuba_mult(const BigInt &num) const;
-std::string BigInt::fft_mult(const BigInt &num) const {
-    std::vector<int> a(m_number.size());
-    std::vector<int> b(num.m_number.size());
+//std::string karatsuba_mult(const std::string &num, const std::string &mul);
+
+
+std::string BigInt::fft_mult(const std::string &num, const std::string &mul) {
+    std::vector<int> a(num.size());
+    std::vector<int> b(mul.size());
 
     int zeros = 0;
     bool count = true;
-    for (int i = m_number.size()-1; i >= 0; --i) {
-        a[i] = m_number[i] - '0';
+    for (int i = num.size()-1; i >= 0; --i) {
+        a[i] = num[i] - '0';
         if (a[i]) count = false;
         if (!a[i]) zeros += count;
     }
 
     count = true;
-    for (int i = num.m_number.size()-1; i >= 0; --i) {
-        b[i] = num.m_number[i] - '0';
+    for (int i = mul.size()-1; i >= 0; --i) {
+        b[i] = mul[i] - '0';
         if (b[i]) count = false;
         if (!b[i]) zeros += count;
     }
@@ -111,10 +144,7 @@ std::string BigInt::fft_mult(const BigInt &num) const {
         curr /= 10;
     }
 
-    int i = 0;
-    j = res.size()-1;
-
-    while (i < j) std::swap(res[i++], res[j--]);
+    swap_str(res);
     while (zeros-- > 0) res += '0';
     return res;
 }
@@ -122,7 +152,7 @@ std::string BigInt::fft_mult(const BigInt &num) const {
 
 
 BigInt::BigInt(std::string number) {
-    if (number.empty()) {
+    if (number.empty() || m_number == "-0") {
         m_positive = true;
         m_number = "0";
         return;
@@ -139,6 +169,26 @@ BigInt::BigInt(std::string number) {
         m_number += number[i++];
     }
 }
+
+std::string BigInt::binary() const {
+    std::string res = bin(m_number);
+    if (m_positive) {
+        swap_str(res);
+        return "0" + res;
+    }
+
+    // for negative numbers inverse all bits and add 1
+    bool add = true;
+    for (int i = 0; i < res.size(); ++i) {
+        if (add) add = res[i] == '0';
+        else res[i] = res[i] == '1' ? '0' : '1';
+    }
+
+    res += '1';
+    swap_str(res);
+    return res;
+}
+//BigInt BigInt::pow(const BigInt &step) const;
 
 
 
@@ -165,10 +215,9 @@ BigInt BigInt::operator-(const BigInt &num) const {
 BigInt BigInt::operator*(const BigInt &num) const {
     std::string sign = (m_positive && num.m_positive || !m_positive && !num.m_positive) ? "" : "-";
 
-    // If brute can be bigger than 100'000 digits
-    if (m_number.size() < 100'000 || num.m_number.size() < 100'000) return {sign + fft_mult(num)};
+    if (m_number.size() < 100'000 || num.m_number.size() < 100'000) return {sign + fft_mult(m_number, num.m_number)};
     return {0};
-    // return {sign + karatsuba_mult(num)};
+    // return {sign + karatsuba_mult(m_number, num.m_number)};
 }
 
 
@@ -212,7 +261,17 @@ bool BigInt::operator==(const BigInt &num) const {
 
 // Todo convert here to 31 bit number and add sign
 BigInt::operator int() const {
-    return std::stoi(m_number);
+    std::string res = binary();
+    const int size = res.size();
+    int num = 0;
+
+    if (size >= 32 && res[size-32] == '1')
+        num |= 1 << 31;
+
+    for (int i = std::max(0, (int)res.size()-31), j = 30; i < res.size(); ++i, j--)
+        if (res[i] == '1')
+            num |= 1 << j;
+    return num;
 }
 BigInt::operator std::string() const {
     return (m_positive ? "" : "-") + m_number;

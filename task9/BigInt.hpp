@@ -18,10 +18,13 @@ private:
     static std::string add(const std::string &num1, const std::string &num2);
     static std::string subtract(const std::string &num, const std::string &minus);
     static std::string divide(const std::string &num, const std::string &den, bool _remainder);
+    static std::string divide_by_two(const std::string &num);
 
-    std::string karatsuba_mult(const BigInt &num) const;
-    std::string fft_mult(const BigInt &num) const;
+    static std::string karatsuba_mult(const std::string &num, const std::string &mul);
+    static std::string fft_mult(const std::string &num, const std::string &mul);
 
+    static void swap_str(std::string &number);
+    static std::string bin(std::string num);
     static Comparison compare(const std::string &num1, const std::string &num2);
 
     void operator=(int) = delete;
@@ -41,8 +44,8 @@ public:
     BigInt operator/(const BigInt &num) const;
     BigInt operator%(const BigInt &num) const;
 
-    bool operator<(const BigInt &num) const;
-    bool operator>(const BigInt &num) const;
+    bool operator< (const BigInt &num) const;
+    bool operator> (const BigInt &num) const;
     bool operator<=(const BigInt &num) const;
     bool operator>=(const BigInt &num) const;
     bool operator==(const BigInt &num) const;

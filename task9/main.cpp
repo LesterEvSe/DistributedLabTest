@@ -1,4 +1,6 @@
 #include <iostream>
+#include <bitset>
+
 #include "BigInt.hpp"
 #include "fft.hpp"
 
@@ -135,12 +137,43 @@ void division_with_remainder_tests() {
     num2 = BigInt("-15653");
     std::cout << "Test3: " << check(num1 % num2, BigInt(-6483));
 
-
     num1 = BigInt("-1030904679897134708160285970453473199806033360699641489201333428182197161893");
     num2 = BigInt("45845269018283096547057010054707163542");
     std::cout << "Test4: " << check(num1 % num2, BigInt("-41806999527922083709215100619759029989"));
 
     std::cout << std::endl;
+}
+
+void binary_tests() {
+    BigInt num;
+    num = BigInt("140316724549002105");
+
+    std::bitset<64> plus(140316724549002105);
+    std::bitset<64> minus(-140316724549002105);
+
+    std::cout << "BigInt:       " << num.binary() << "\n";
+    std::cout << "bitset: " << plus << "\n\n";
+
+    num = BigInt("-140316724549002105");
+    std::cout << "BigInt:       " << num.binary() << "\n";
+    std::cout << "bitset: " << minus << "\n\n";
+
+    num = BigInt("-1");
+    std::cout << num.binary() << "\n";
+
+    num = BigInt("10346798971347081602859704534736033360699641489201333421893");
+    std::cout << num.binary() << "\n";
+    std::cout << "01101001011111100110011111001001110010110101001000011001011000110011100001111011000101001001011001001110110001101011101011011110000000111111111001001001010110000100000100110001100100011101000101" << "\n";
+}
+
+void int_conversion_tests() {
+    std::cout << (long long)140316724549002105 << std::endl;
+    std::cout << "int: " << (int)140316724549002105 << "\n";
+    std::cout << "From BigInt: " << (int)BigInt("140316724549002105") << "\n\n";
+
+    std::cout << (long long)-140316724549002105 << std::endl;
+    std::cout << "int: " << (int)-140316724549002105 << "\n";
+    std::cout << "From BigInt: " << (int)BigInt("-140316724549002105") << "\n\n";
 }
 
 void fft_tests() {
@@ -152,11 +185,23 @@ void fft_tests() {
         std::cout << num << ' ';
 }
 
+
 int main() {
     plus_and_minus_tests();
     multiply_tests();
     division_tests();
     division_with_remainder_tests();
+    binary_tests();
+
+    /*
+    std::bitset<32> tmp(-140316724549002105);
+    std::cout << "\nHere\n";
+    std::cout << tmp << "\n";
+    std::cout << (int)BigInt("-140316724549002105");
+    */
+    //std::cout << BigInt("-140316724549002105").binary();
+
+    std::cout << (int)140316724549002105 << "\n" << (int)BigInt("140316724549002105");
 
     return 0;
 }
