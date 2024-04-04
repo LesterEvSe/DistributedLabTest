@@ -158,33 +158,32 @@ void binary_tests() {
     std::cout << "BigInt:       " << num.binary() << "\n";
     std::cout << "bitset: " << minus << "\n\n";
 
-    num = BigInt("-1");
-    std::cout << num.binary() << "\n";
-
     num = BigInt("10346798971347081602859704534736033360699641489201333421893");
     std::cout << num.binary() << "\n";
     std::cout << "01101001011111100110011111001001110010110101001000011001011000110011100001111011000101001001011001001110110001101011101011011110000000111111111001001001010110000100000100110001100100011101000101" << "\n";
+    std::cout << std::endl;
 }
 
 void int_conversion_tests() {
-    std::cout << (long long)140316724549002105 << std::endl;
-    std::cout << "int: " << (int)140316724549002105 << "\n";
+    std::cout << "number: " << (long long)140316724549002105 << std::endl;
+    std::cout << "int:         " << (int)140316724549002105 << "\n";
     std::cout << "From BigInt: " << (int)BigInt("140316724549002105") << "\n\n";
 
-    std::cout << (long long)-140316724549002105 << std::endl;
-    std::cout << "int: " << (int)-140316724549002105 << "\n";
-    std::cout << "From BigInt: " << (int)BigInt("-140316724549002105") << "\n\n";
+    std::cout << "number: " << (long long)-1403167245002105 << std::endl;
+    std::cout << "int:         " << (int)-1403167245002105 << "\n";
+    std::cout << "From BigInt: " << (int)BigInt("-1403167245002105") << "\n\n";
 }
 
 void fft_tests() {
-    std::vector<int> a = std::vector<int> {3, 9, 4, 2};
-    std::vector<int> b = std::vector<int> {7, 3, 9, 0};
-    std::vector<int> c = FFT::multiply(a, b);
+    std::vector<long long> a = std::vector<long long> {3, 9, 4, 2};
+    std::vector<long long> b = std::vector<long long> {7, 3, 9, 0};
+    std::vector<long long> c = FFT::multiply(a, b);
 
-    for (int num : c)
+    for (long long num : c)
         std::cout << num << ' ';
 }
 
+#include <limits>
 
 int main() {
     plus_and_minus_tests();
@@ -192,16 +191,11 @@ int main() {
     division_tests();
     division_with_remainder_tests();
     binary_tests();
+    int_conversion_tests();
 
-    /*
-    std::bitset<32> tmp(-140316724549002105);
-    std::cout << "\nHere\n";
-    std::cout << tmp << "\n";
-    std::cout << (int)BigInt("-140316724549002105");
-    */
-    //std::cout << BigInt("-140316724549002105").binary();
-
-    std::cout << (int)140316724549002105 << "\n" << (int)BigInt("140316724549002105");
+    BigInt num(2);
+    BigInt step(523'423);
+    std::cout << std::string(num.pow(step));
 
     return 0;
 }

@@ -116,8 +116,8 @@ BigInt::Comparison BigInt::compare(const std::string &num1, const std::string &n
 
 
 std::string BigInt::fft_mult(const std::string &num, const std::string &mul) {
-    std::vector<int> a(num.size());
-    std::vector<int> b(mul.size());
+    std::vector<long long> a(num.size());
+    std::vector<long long> b(mul.size());
 
     int zeros = 0;
     bool count = true;
@@ -134,7 +134,7 @@ std::string BigInt::fft_mult(const std::string &num, const std::string &mul) {
         if (!b[i]) zeros += count;
     }
 
-    std::vector<int> answer = FFT::multiply(a, b);
+    std::vector<long long> answer = FFT::multiply(a, b);
     std::string res;
 
     int curr = 0, j = answer.size()-1;
@@ -188,7 +188,22 @@ std::string BigInt::binary() const {
     swap_str(res);
     return res;
 }
-//BigInt BigInt::pow(const BigInt &step) const;
+
+BigInt BigInt::pow(const BigInt &step) const {
+    if (m_number == "1") return {1};
+    if (m_number == "0" && step.m_number != "0" || !step.m_positive) return {0};
+    std::string bits = bin(step.m_number);
+    
+    BigInt res(1), curr(*this);
+    for (int i = 0; i < bits.size(); ++i) {
+        if (bits[i] == '1') {
+            res = res * curr;
+            std::cout << res.m_number.size() << "\n";
+        }
+        curr = curr * curr;
+    }
+    return res;
+}
 
 
 
@@ -258,8 +273,6 @@ bool BigInt::operator==(const BigInt &num) const {
     return compare(m_number, num.m_number) == EQUAL;
 }
 
-
-// Todo convert here to 31 bit number and add sign
 BigInt::operator int() const {
     std::string res = binary();
     const int size = res.size();
@@ -268,11 +281,12 @@ BigInt::operator int() const {
     if (size >= 32 && res[size-32] == '1')
         num |= 1 << 31;
 
-    for (int i = std::max(0, (int)res.size()-31), j = 30; i < res.size(); ++i, j--)
+    for (int i = std::max(0, (int)res.size()-31), j = std::min(30, (int)res.size()-1); i < res.size(); ++i, --j)
         if (res[i] == '1')
             num |= 1 << j;
     return num;
 }
+
 BigInt::operator std::string() const {
     return (m_positive ? "" : "-") + m_number;
 }

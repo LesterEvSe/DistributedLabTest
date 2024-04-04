@@ -1,7 +1,7 @@
 #include "fft.hpp"
 #include <cmath> // For M_PI constant
 
-FFT::FFT(const std::vector<int> &nums, short _bits):
+FFT::FFT(const std::vector<long long> &nums, short _bits):
     bits(_bits), n(1LL << bits), m_rev(n), m_data(n), m_roots(n+1)
 {
     for (int i = 0; i < n; ++i)
@@ -17,7 +17,7 @@ FFT::FFT(const std::vector<int> &nums, short _bits):
     for (int i = 0; i < n; ++i)
         m_roots[i+1] = m_roots[i] * multiplier;
 
-    for (int i = 0; i < nums.size(); ++i)
+    for (long long i = 0; i < nums.size(); ++i)
         m_data[i] = reim(nums[i], 0);
 }
 
@@ -64,7 +64,7 @@ const std::vector<FFT::reim> &FFT::data() const {
 }
 
 
-std::vector<int> FFT::multiply(const std::vector<int> &a, const std::vector<int> &b)
+std::vector<long long> FFT::multiply(const std::vector<long long> &a, const std::vector<long long> &b)
 {
     const size_t alen = a.size(), blen = b.size();
     const size_t resn = alen + blen - 1;
@@ -80,7 +80,7 @@ std::vector<int> FFT::multiply(const std::vector<int> &a, const std::vector<int>
     A.transform(true);
 
     const std::vector<reim> &data = A.data();
-    std::vector<int> res(resn);
+    std::vector<long long> res(resn);
 
     for (int i = 0; i < resn; ++i)
         res[i] = round(data[i].real());

@@ -24,7 +24,7 @@ private:
     static std::string fft_mult(const std::string &num, const std::string &mul);
 
     static void swap_str(std::string &number);
-    static std::string bin(std::string num);
+    static std::string bin(std::string num); // return raw bits from smallest to biggest
     static Comparison compare(const std::string &num1, const std::string &num2);
 
     void operator=(int) = delete;

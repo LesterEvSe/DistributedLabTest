@@ -12,18 +12,18 @@ private:
     const short bits;
     const size_t n;
 
-    std::vector<int> m_rev;
+    std::vector<long long> m_rev;
     std::vector<reim> m_data, m_roots;
 
     // Set size func
-    FFT(const std::vector<int> &nums, short _bits);
+    FFT(const std::vector<long long> &nums, short _bits);
     void transform(bool inverse);
 
     void operator*=(const FFT &nums);
     const std::vector<reim> &data() const;
 
 public:
-    static std::vector<int> multiply(const std::vector<int> &a, const std::vector<int> &b);
+    static std::vector<long long> multiply(const std::vector<long long> &a, const std::vector<long long> &b);
 };
 
 #endif //LONGARITH_FFT_HPP
