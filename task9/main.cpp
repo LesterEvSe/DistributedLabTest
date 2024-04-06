@@ -183,8 +183,6 @@ void fft_tests() {
         std::cout << num << ' ';
 }
 
-#include <limits>
-
 int main() {
     plus_and_minus_tests();
     multiply_tests();
@@ -193,9 +191,10 @@ int main() {
     binary_tests();
     int_conversion_tests();
 
-    BigInt num(2);
-    BigInt step(523'423);
-    std::cout << std::string(num.pow(step));
+    BigInt num(235);
+    BigInt step(523'425);
+    num.pow(step);
+    // std::cout << std::string(num.pow(step));
 
     return 0;
 }

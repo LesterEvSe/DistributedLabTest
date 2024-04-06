@@ -193,7 +193,7 @@ BigInt BigInt::pow(const BigInt &step) const {
     if (m_number == "1") return {1};
     if (m_number == "0" && step.m_number != "0" || !step.m_positive) return {0};
     std::string bits = bin(step.m_number);
-    
+
     BigInt res(1), curr(*this);
     for (int i = 0; i < bits.size(); ++i) {
         if (bits[i] == '1') {
@@ -229,6 +229,7 @@ BigInt BigInt::operator-(const BigInt &num) const {
 
 BigInt BigInt::operator*(const BigInt &num) const {
     std::string sign = (m_positive && num.m_positive || !m_positive && !num.m_positive) ? "" : "-";
+    return {sign + fft_mult(m_number, num.m_number)};
 
     if (m_number.size() < 100'000 || num.m_number.size() < 100'000) return {sign + fft_mult(m_number, num.m_number)};
     return {0};
