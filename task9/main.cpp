@@ -89,6 +89,10 @@ void multiply_tests() {
     num2 = BigInt("45000");
     std::cout << "Test6: " << check(num1 * num2, BigInt("900000000"));
 
+    num1 = BigInt(0);
+    num2 = BigInt("8872569260041333924699635889877017262804525726346271216292420744804783913117122283226");
+    std::cout << "Test7: " << check(num1 * num2, BigInt("0"));
+
     std::cout << std::endl;
 }
 
@@ -144,7 +148,7 @@ void division_with_remainder_tests() {
     std::cout << std::endl;
 }
 
-void binary_tests() {
+void binary_conversion_tests() {
     BigInt num;
     num = BigInt("140316724549002105");
 
@@ -174,6 +178,19 @@ void int_conversion_tests() {
     std::cout << "From BigInt: " << (int)BigInt("-1403167245002105") << "\n\n";
 }
 
+void pow_tests() {
+    // using python ** for testing
+    std::cout << "Pow Tests\n";
+    BigInt num, degree, res;
+
+    num = BigInt(13);
+    degree = BigInt(138);
+    res = BigInt("5298862111705984468986826004208960681542272238274522316228155317510506921316368923561909729710342452590041368532447502426123793365390569569956006999824329");
+    std::cout << "Test1: " << check(num.pow(degree), BigInt(res));
+
+    std::cout << std::endl;
+}
+
 void fft_tests() {
     std::vector<long long> a = std::vector<long long> {3, 9, 4, 2};
     std::vector<long long> b = std::vector<long long> {7, 3, 9, 0};
@@ -188,13 +205,9 @@ int main() {
     multiply_tests();
     division_tests();
     division_with_remainder_tests();
-    binary_tests();
+    binary_conversion_tests();
     int_conversion_tests();
-
-    BigInt num(235);
-    BigInt step(523'425);
-    num.pow(step);
-    // std::cout << std::string(num.pow(step));
+    pow_tests();
 
     return 0;
 }

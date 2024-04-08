@@ -20,7 +20,7 @@ private:
     static std::string divide(const std::string &num, const std::string &den, bool _remainder);
     static std::string divide_by_two(const std::string &num);
 
-    static std::string karatsuba_mult(const std::string &num, const std::string &mul);
+    static std::string karatsuba_mult(std::string num, std::string mul);
     static std::string fft_mult(const std::string &num, const std::string &mul);
 
     static void swap_str(std::string &number);

@@ -2,7 +2,6 @@
 #include "fft.hpp"
 
 #include <stdexcept>
-#include <climits> // for INT_MAX constant
 #include <iostream> // for testing
 
 
@@ -70,7 +69,9 @@ std::string BigInt::divide(const std::string &num, const std::string &den, bool 
         if (!res.empty() || digit != '0')
             res += digit;
     }
-    return _remainder ? remainder : res;
+
+    if (_remainder) return remainder;
+    return res;
 }
 
 std::string BigInt::divide_by_two(const std::string &num) {
@@ -112,7 +113,60 @@ BigInt::Comparison BigInt::compare(const std::string &num1, const std::string &n
     return EQUAL;
 }
 
-//std::string karatsuba_mult(const std::string &num, const std::string &mul);
+std::string BigInt::karatsuba_mult(std::string num, std::string mul)
+{
+    if (num.size() == mul.size() && num.size() == 1)
+        return std::to_string((num[0] - '0') * (mul[0] - '0'));
+    if (num == "0" || mul == "0")
+        return "0";
+
+    // Work Good
+    int n1 = num.size(), n2 = mul.size();
+    while (n2 > n1) {
+        num = "0" + num;
+        ++n1;
+    }
+    while (n2 < n1) {
+        mul = "0" + mul;
+        ++n2;
+    }
+
+
+    if (n1 % 2 == 1) {
+        num = "0" + num;
+        mul = "0" + mul;
+        ++n1;
+    }
+
+    std::string Al, Ar, Bl, Br;
+    for (int i = 0; i < n1/2; ++i) {
+        Al += num[i];
+        Bl += mul[i];
+        Ar += num[n1/2 + i];
+        Br += mul[n1/2 + i];
+    }
+
+    std::string p = karatsuba_mult(Al, Bl);
+    std::string q = karatsuba_mult(Ar, Br);
+    std::string res = subtract(karatsuba_mult(add(Al, Ar), add(Bl, Br)), add(p, q));
+
+    // Multiply p by 10^n
+    for (int i = 0; i < n1; ++i)
+        p += '0';
+
+    // Multiply res by 10^(n/2)
+    for (int i = 0; i < n1/2; ++i)
+        res += '0';
+
+    std::string ans = add(p, add(q, res));
+    int i = 0;
+
+    // TODO maybe need to delete
+    // remove leading zeros
+    while (i < ans.size() && ans[i] == '0') ++i;
+    if (i == ans.size()) return "0";
+    return ans.substr(i);
+}
 
 
 std::string BigInt::fft_mult(const std::string &num, const std::string &mul) {
@@ -144,7 +198,9 @@ std::string BigInt::fft_mult(const std::string &num, const std::string &mul) {
         curr /= 10;
     }
 
+    if (res == "0") return res;
     swap_str(res);
+
     while (zeros-- > 0) res += '0';
     return res;
 }
@@ -164,8 +220,10 @@ BigInt::BigInt(std::string number) {
         ++i;
 
     while (i < number.size()) {
-        if (!isdigit(number[i]))
+        if (!isdigit(number[i])) {
+            std::cerr << number;
             throw std::runtime_error("Incorrect number");
+        }
         m_number += number[i++];
     }
 }
@@ -196,10 +254,8 @@ BigInt BigInt::pow(const BigInt &step) const {
 
     BigInt res(1), curr(*this);
     for (int i = 0; i < bits.size(); ++i) {
-        if (bits[i] == '1') {
+        if (bits[i] == '1')
             res = res * curr;
-            std::cout << res.m_number.size() << "\n";
-        }
         curr = curr * curr;
     }
     return res;
@@ -229,7 +285,8 @@ BigInt BigInt::operator-(const BigInt &num) const {
 
 BigInt BigInt::operator*(const BigInt &num) const {
     std::string sign = (m_positive && num.m_positive || !m_positive && !num.m_positive) ? "" : "-";
-    return {sign + fft_mult(m_number, num.m_number)};
+    return {sign + karatsuba_mult(m_number, num.m_number)};
+    //return {sign + fft_mult(m_number, num.m_number)};
 
     if (m_number.size() < 100'000 || num.m_number.size() < 100'000) return {sign + fft_mult(m_number, num.m_number)};
     return {0};
