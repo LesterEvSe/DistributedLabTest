@@ -113,6 +113,7 @@ BigInt::Comparison BigInt::compare(const std::string &num1, const std::string &n
     return EQUAL;
 }
 
+// TODO speed up with adding indexes of beg and end for num and mul
 std::string BigInt::karatsuba_mult(std::string num, std::string mul)
 {
     if (num.size() == mul.size() && num.size() == 1)
@@ -121,49 +122,34 @@ std::string BigInt::karatsuba_mult(std::string num, std::string mul)
         return "0";
 
     // Work Good
-    int n1 = num.size(), n2 = mul.size();
-    while (n2 > n1) {
-        num = "0" + num;
-        ++n1;
-    }
-    while (n2 < n1) {
-        mul = "0" + mul;
-        ++n2;
-    }
+    size_t n = std::max(num.size(), mul.size());
+    n += n & 1;
+    const size_t half = n >> 1;
 
-
-    if (n1 % 2 == 1) {
-        num = "0" + num;
-        mul = "0" + mul;
-        ++n1;
-    }
+    while (num.size() < n) num = "0" + num;
+    while (mul.size() < n) mul = "0" + mul;
 
     std::string Al, Ar, Bl, Br;
-    for (int i = 0; i < n1/2; ++i) {
+    for (int i = 0; i < half; ++i) {
         Al += num[i];
         Bl += mul[i];
-        Ar += num[n1/2 + i];
-        Br += mul[n1/2 + i];
+        Ar += num[half + i];
+        Br += mul[half + i];
     }
 
     std::string p = karatsuba_mult(Al, Bl);
     std::string q = karatsuba_mult(Ar, Br);
     std::string res = subtract(karatsuba_mult(add(Al, Ar), add(Bl, Br)), add(p, q));
 
-    // Multiply p by 10^n
-    for (int i = 0; i < n1; ++i)
-        p += '0';
-
-    // Multiply res by 10^(n/2)
-    for (int i = 0; i < n1/2; ++i)
-        res += '0';
-
+    // Multiply p and res by 10^n and 10^(n/2) respectively
+    for (int i = 0; i < n; ++i) p += '0';
+    for (int i = 0; i < half; ++i) res += '0';
     std::string ans = add(p, add(q, res));
-    int i = 0;
 
-    // TODO maybe need to delete
     // remove leading zeros
+    int i = 0;
     while (i < ans.size() && ans[i] == '0') ++i;
+
     if (i == ans.size()) return "0";
     return ans.substr(i);
 }
@@ -254,8 +240,10 @@ BigInt BigInt::pow(const BigInt &step) const {
 
     BigInt res(1), curr(*this);
     for (int i = 0; i < bits.size(); ++i) {
-        if (bits[i] == '1')
+        if (bits[i] == '1') {
             res = res * curr;
+            // std::cout << res.m_number.size() << std::endl;
+        }
         curr = curr * curr;
     }
     return res;
@@ -285,12 +273,9 @@ BigInt BigInt::operator-(const BigInt &num) const {
 
 BigInt BigInt::operator*(const BigInt &num) const {
     std::string sign = (m_positive && num.m_positive || !m_positive && !num.m_positive) ? "" : "-";
-    return {sign + karatsuba_mult(m_number, num.m_number)};
-    //return {sign + fft_mult(m_number, num.m_number)};
 
-    if (m_number.size() < 100'000 || num.m_number.size() < 100'000) return {sign + fft_mult(m_number, num.m_number)};
-    return {0};
-    // return {sign + karatsuba_mult(m_number, num.m_number)};
+    if (m_number.size() + num.m_number.size() < 100'000) return {sign + karatsuba_mult(m_number, num.m_number)};
+    return {sign + fft_mult(m_number, num.m_number) };
 }
 
 

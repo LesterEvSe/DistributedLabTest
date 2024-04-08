@@ -188,6 +188,10 @@ void pow_tests() {
     res = BigInt("5298862111705984468986826004208960681542272238274522316228155317510506921316368923561909729710342452590041368532447502426123793365390569569956006999824329");
     std::cout << "Test1: " << check(num.pow(degree), BigInt(res));
 
+    num = BigInt(235);
+    degree = BigInt(523'425);
+    // num.pow(degree); // Too long for Karatsuba, but not for FFT!
+
     std::cout << std::endl;
 }
 
@@ -208,6 +212,8 @@ int main() {
     binary_conversion_tests();
     int_conversion_tests();
     pow_tests();
+
+
 
     return 0;
 }
