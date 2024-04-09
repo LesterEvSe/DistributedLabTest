@@ -77,6 +77,10 @@ void Test::detail::subtract() {
     num2 = BigInt("23");
     std::cout << check(num1, num2, BigInt("8773"), '-', 5);
 
+    num1 = BigInt("99954780583793491925675");
+    num2 = BigInt("99954780583793491925675");
+    std::cout << check(num1, num2, BigInt(0), '-', 6);
+
     std::cout << std::endl;
 }
 
@@ -197,6 +201,7 @@ void Test::detail::binary_conversion() {
     std::cout << "BigInt:   " << num.binary() << "\n";
     std::cout << "Web-Site: 01101001011111100110011111001001110010110101001000011001011000110011100001111011000101001001011001001110110001101011101011011110000000111111111001001001010110000100000100110001100100011101000101" << "\n";
 
+    std::cout << BigInt(523'425).binary() << std::endl;
     std::cout << "\n\n";
 }
 void Test::detail::int_conversion() {
@@ -254,8 +259,8 @@ void Test::detail::pow() {
     /*
     num = BigInt(235);
     degree = BigInt(523'425);
+    std::cout << std::string(num.pow(degree)).size(); // Too long for Karatsuba, but not for FFT!
     */
-    // num.pow(degree); // Too long for Karatsuba, but not for FFT!
 
     std::cout << std::endl;
 }

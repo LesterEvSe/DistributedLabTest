@@ -18,8 +18,7 @@ std::string BigInt::add(const std::string &num1, const std::string &num2) {
         sum /= 10;
     }
 
-    for (i = 0, j = answer.size()-1; i < j; ++i, --j)
-        std::swap(answer[i], answer[j]);
+    swap_str(answer);
     return answer;
 }
 
@@ -45,14 +44,17 @@ std::string BigInt::subtract(const std::string &num, const std::string &minus) {
     while (answer.back() == '0')
         answer.pop_back();
 
-    for (i = 0, j = answer.size()-1; i < j; ++i, --j)
-        std::swap(answer[i], answer[j]);
+    swap_str(answer);
     return answer;
 }
 
 // Long Division algorithm. Standard algorithm from elementary school
+/*
+  When dividing, we get the result and the remainder,
+  so depending on the Boolean variable we return the desired value
+ */
 std::string BigInt::divide(const std::string &num, const std::string &den, bool _remainder) {
-    if (den.size() == 1 && den[0] == '0')
+    if (den == "0")
         throw std::runtime_error("Zero Division Error");
 
     std::string res;
@@ -279,14 +281,12 @@ BigInt BigInt::operator*(const BigInt &num) const {
 
 
 BigInt BigInt::operator/(const BigInt &num) const {
-    if (num.m_number == "0") throw std::runtime_error("Zero division error");
     std::string sign = (m_positive && num.m_positive || !m_positive && !num.m_positive) ? "" : "-";
     std::string res = BigInt::divide(m_number, num.m_number, false);
     return res.empty() ? BigInt(0) : BigInt(sign + res);
 }
 
 BigInt BigInt::operator%(const BigInt &num) const {
-    if (num.m_number == "0") throw std::runtime_error("Zero division error");
     std::string sign = m_positive ? "" : "-";
     std::string res = BigInt::divide(m_number, num.m_number, true);
     return res.empty() ? BigInt(0) : BigInt(sign + res);
