@@ -3,6 +3,7 @@
 
 #include <string>
 
+
 class BigInt
 {
 private:
@@ -53,6 +54,5 @@ public:
     explicit operator int() const;
     explicit operator std::string() const;
 };
-
 
 #endif //LONGARITH_BIGINT_HPP

@@ -113,7 +113,6 @@ BigInt::Comparison BigInt::compare(const std::string &num1, const std::string &n
     return EQUAL;
 }
 
-// TODO speed up with adding indexes of beg and end for num and mul
 std::string BigInt::karatsuba_mult(std::string num, std::string mul)
 {
     if (num.size() == mul.size() && num.size() == 1)
@@ -126,8 +125,8 @@ std::string BigInt::karatsuba_mult(std::string num, std::string mul)
     n += n & 1;
     const size_t half = n >> 1;
 
-    while (num.size() < n) num = "0" + num;
-    while (mul.size() < n) mul = "0" + mul;
+    num = std::string(n - num.size(), '0') + num;
+    mul = std::string(n - mul.size(), '0') + mul;
 
     std::string Al, Ar, Bl, Br;
     for (int i = 0; i < half; ++i) {
@@ -234,8 +233,9 @@ std::string BigInt::binary() const {
 }
 
 BigInt BigInt::pow(const BigInt &step) const {
-    if (m_number == "1") return {1};
-    if (m_number == "0" && step.m_number != "0" || !step.m_positive) return {0};
+    if (m_number == "0" && step.m_number == "0") throw std::runtime_error("0.pow(0) error");
+    if (m_number == "1" || step.m_number == "0") return {1};
+    if (m_number == "0" || !step.m_positive) return {0};
     std::string bits = bin(step.m_number);
 
     BigInt res(1), curr(*this);
@@ -273,19 +273,20 @@ BigInt BigInt::operator-(const BigInt &num) const {
 
 BigInt BigInt::operator*(const BigInt &num) const {
     std::string sign = (m_positive && num.m_positive || !m_positive && !num.m_positive) ? "" : "-";
-
-    if (m_number.size() + num.m_number.size() < 100'000) return {sign + karatsuba_mult(m_number, num.m_number)};
+    if (m_number.size() + num.m_number.size() < 10000) return {sign + karatsuba_mult(m_number, num.m_number)};
     return {sign + fft_mult(m_number, num.m_number) };
 }
 
 
 BigInt BigInt::operator/(const BigInt &num) const {
+    if (num.m_number == "0") throw std::runtime_error("Zero division error");
     std::string sign = (m_positive && num.m_positive || !m_positive && !num.m_positive) ? "" : "-";
     std::string res = BigInt::divide(m_number, num.m_number, false);
     return res.empty() ? BigInt(0) : BigInt(sign + res);
 }
 
 BigInt BigInt::operator%(const BigInt &num) const {
+    if (num.m_number == "0") throw std::runtime_error("Zero division error");
     std::string sign = m_positive ? "" : "-";
     std::string res = BigInt::divide(m_number, num.m_number, true);
     return res.empty() ? BigInt(0) : BigInt(sign + res);
