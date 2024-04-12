@@ -1,2 +1,6 @@
 *build*
+*.csv
 .idea
+
+# exe files
+WebAnalytics
