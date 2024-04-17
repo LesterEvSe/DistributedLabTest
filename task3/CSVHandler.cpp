@@ -41,32 +41,25 @@ CSVHandler::CSVHandler(const std::string &data1, const std::string data2)
     std::getline(file2, line);
 
     // To check for duplicates
-    std::unordered_set<ll> in_first_answer, in_second_answer;
+    std::unordered_set<ll> in_answer;
 
     while (std::getline(file2, line)) {
         std::pair<ll, ll> temp = process_line(line);
         ll user = temp.first;
         ll prod = temp.second;
 
-        if (!in_first_answer.count(user) && day1.count(user)) {
-            m_first_answer.emplace_back(user);
-            in_first_answer.emplace(user);
-        }
-
-        if (!in_second_answer.count(user) && (!day1.count(user) || !day1[user].count(prod))) {
-            m_second_answer.emplace_back(user);
-            in_second_answer.emplace(user);
+        if (!in_answer.count(user) && day1.count(user) && !day1[user].count(prod)) {
+            m_answer.emplace_back(user);
+            in_answer.emplace(user);
         }
     }
 }
 
-void CSVHandler::print_answers() const {
-    std::cout << "\nThe IDs of the users who visited some pages on both days:\n";
-    for (ll elem : m_first_answer)
-        std::cout << elem << ' ';
+void CSVHandler::print_answer() const {
+    std::cout << "\nThe IDs of the users who visited some pages on both days and\n";
+    std::cout << "who on the second day visited the page that hadn't been visited by this user on the first day:\n";
 
-    std::cout << "\n\nThe IDs of the users who on the second day visited the page that hadn't been visited by this user on the first day:\n";
-    for (ll elem : m_second_answer)
+    for (ll elem : m_answer)
         std::cout << elem << ' ';
     std::cout << std::endl << std::endl;
 }

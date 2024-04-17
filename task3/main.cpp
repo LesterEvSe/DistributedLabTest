@@ -11,6 +11,6 @@ int main() {
     std::cout << "Enter the second file path: ";
     std::getline(std::cin, data2);
 
-    CSVHandler(data1, data2).print_answers();
+    CSVHandler(data1, data2).print_answer();
     return 0;
 }
